@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para Alex 💜</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Homemade+Apple&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --violeta-claro:#efe6ff;
+  --violeta:#b497d6;
+  --violeta-oscuro:#6a4c93;
+  --especial:#9b5de5;
+  --abierto:#7b5fb0;
+}
+
+body{
+  margin:0;
+  background:linear-gradient(#f8f3ff,#e7dbff);
+  font-family:'Playfair Display', serif;
+  text-align:center;
+  overflow-x:hidden;
+}
+
+/* PARTÍCULAS */
+.particula{
+  position:fixed;
+  top:-10px;
+  color:#cdb4ff;
+  font-size:14px;
+  animation:caer linear infinite;
+  pointer-events:none;
+}
+@keyframes caer{
+  to{transform:translateY(110vh); opacity:0;}
+}
+
+/* TÍTULOS */
+h1{
+  margin:25px 15px 5px;
+  font-style:italic;
+  color:var(--violeta-oscuro);
+}
+h2{
+  font-size:16px;
+  color:#7a5ea8;
+  margin-bottom:10px;
+}
+
+/* CONTADOR */
+.contador{
+  margin:10px auto 25px;
+  padding:12px 20px;
+  display:inline-block;
+  background:rgba(255,255,255,.6);
+  border-radius:16px;
+  color:#5b3f8c;
+  font-size:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,.1);
+}
+.contador span{
+  font-weight:bold;
+  color:#6a4c93;
+}
+
+/* EDIFICIO */
+.edificio{
+  width:330px;
+  margin:0 auto 40px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  padding:25px;
+  background:var(--violeta-claro);
+  border-radius:22px;
+  box-shadow:0 15px 30px rgba(0,0,0,.15);
+}
+
+/* VENTANAS */
+.ventana{
+  height:90px;
+  border-radius:12px;
+  background:#d6c9f0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  color:#6b5b8a;
+  cursor:not-allowed;
+  position:relative;
+}
+
+.ventana.activa{
+  background:var(--violeta);
+  color:white;
+  cursor:pointer;
+}
+
+.ventana.abierta{
+  background:var(--abierto);
+  color:white;
+  cursor:pointer;
+}
+.ventana.abierta::after{
+  content:"✓";
+  position:absolute;
+  bottom:6px;
+  right:8px;
+  font-size:14px;
+}
+
+/* ESPECIAL */
+.especial{
+  grid-column:1 / -1;
+  background:linear-gradient(135deg,#c77dff,#9b5de5);
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 0 18px rgba(155,93,229,.6);
+  animation:latido 2s infinite;
+}
+@keyframes latido{
+  50%{transform:scale(1.06);}
+}
+
+/* POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.popup-contenido{
+  background:white;
+  padding:30px;
+  max-width:320px;
+  border-radius:18px;
+  color:#4a357a;
+}
+.popup p{
+  font-family:'Homemade Apple', cursive;
+  font-size:16px;
+  line-height:1.6;
+  white-space:pre-line;
+}
+.popup button{
+  margin-top:20px;
+  padding:8px 18px;
+  border:none;
+  background:var(--violeta);
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Para vos, Alex 💜</h1>
+<h2>Un pequeño calendario para recordarte cuánto te quiero</h2>
+
+<div class="contador" id="contador">
+  Faltan <span>–</span> para nuestro aniversario 💜
+</div>
+
+<!-- MÚSICA EMBED -->
+<div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: 280px; height: 60px; border-radius: 12px; overflow:hidden; box-shadow: 0 4px 20px rgba(0,0,0,.3);">
+  <iframe width="280" height="60" 
+    src="https://www.youtube.com/embed/t0Usk1CiniQ?autoplay=1&loop=1&playlist=t0Usk1CiniQ&controls=0&modestbranding=1"
+    title="YouTube player"
+    frameborder="0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<div class="edificio" id="calendario"></div>
+
+<div class="popup" id="popup">
+  <div class="popup-contenido">
+    <p id="mensaje"></p>
+    <button onclick="cerrar()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+/* PARTÍCULAS */
+setInterval(()=>{
+  const p=document.createElement("div");
+  p.className="particula";
+  p.innerText="✦";
+  p.style.left=Math.random()*100+"vw";
+  p.style.animationDuration=3+Math.random()*4+"s";
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),7000);
+},500);
+
+/* CONTADOR 30 DE ENERO */
+const contadorEl=document.getElementById("contador");
+const objetivo=new Date(new Date().getFullYear(),0,30,0,0,0);
+
+function actualizarContador(){
+  const ahora=new Date();
+  const diff=objetivo-ahora;
+  if(diff<=0){
+    contadorEl.innerHTML="💜 Hoy cumplimos <span>9 meses</span> 💜";
+    return;
+  }
+  const d=Math.floor(diff/(1000*60*60*24));
+  const h=Math.floor((diff/(1000*60*60))%24);
+  const m=Math.floor((diff/(1000*60))%60);
+  const s=Math.floor((diff/1000)%60);
+  contadorEl.innerHTML=
+    `Faltan <span>${d}</span> días, <span>${h}</span> hs, <span>${m}</span> min y <span>${s}</span> seg 💜`;
+}
+setInterval(actualizarContador,1000);
+actualizarContador();
+
+/* MENSAJES */
+const mensajes=[
+"Arranco este calendario recordándote algo simple: Te amo.",
+"Pensarte me ayuda.",
+"Si hoy fue un día pesado, acá estoy.",
+"Gracias por existir como sos.",
+"Sos un novio excelente.",
+"Me importas incluso en tus días difíciles.",
+"Vale por un abrazo largo.",
+"Encontrarte fue mi casualidad más bonita.",
+"Estás en mis días.",
+"Mi lugar favorito sigue siendo cerca tuyo.",
+"Sos hogar.",
+"Te elijo todos los días.",
+"Me encanta tu forma de querer.",
+"Tu risa me desarma.",
+"Gracias por cuidarme.",
+"Sos paz.",
+"No te cambio por nada.",
+"Siempre vos.",
+"Me hacés sentir segura.",
+"Te pienso más de lo que digo.",
+"Sos mi persona.",
+"Contigo todo es mejor.",
+"Te abrazo en pensamiento.",
+"Gracias por este amor tan lindo."
+];
+
+const mensajeEspecial=
+"Hoy cumplimos 9 meses 💜\n\nGracias por todo este tiempo juntos.\nA pesar de las adversidades, sigamonos eligiendo.\n\nTe amo, Alex.";
+
+/* INICIO DESDE HOY */
+let inicio = localStorage.getItem("inicioCalendario");
+if(!inicio){
+  inicio = new Date().toISOString();
+  localStorage.setItem("inicioCalendario", inicio);
+}
+const hoy = new Date();
+const inicioFecha = new Date(inicio);
+const diasPasados =
+  Math.floor((hoy - inicioFecha)/(1000*60*60*24)) + 1;
+
+/* DÍAS ABIERTOS */
+let abiertos=JSON.parse(localStorage.getItem("diasAbiertos"))||[];
+
+const calendario=document.getElementById("calendario");
+
+for(let i=1;i<=24;i++){
+  const v=document.createElement("div");
+  v.className="ventana";
+  v.innerText=i;
+
+  if(abiertos.includes(i)){
+    v.classList.add("abierta");
+    v.onclick=()=>abrir(mensajes[i-1],i);
+  } else if(i<=diasPasados){
+    v.classList.add("activa");
+    v.onclick=()=>abrir(mensajes[i-1],i);
+  }
+  calendario.appendChild(v);
+}
+
+/* DÍA 30 DE ENERO */
+const e=document.createElement("div");
+e.className="ventana especial";
+e.innerText="30 de enero · 9 meses";
+e.onclick=()=>abrir(mensajeEspecial,"especial");
+calendario.appendChild(e);
+
+function abrir(texto,d){
+  if(navigator.vibrate) navigator.vibrate(50);
+  if(typeof d==="number"&&!abiertos.includes(d)){
+    abiertos.push(d);
+    localStorage.setItem("diasAbiertos",JSON.stringify(abiertos));
+  }
+  const p=document.getElementById("mensaje");
+  p.innerText="";
+  document.getElementById("popup").style.display="flex";
+  let i=0;
+  const t=setInterval(()=>{
+    p.innerText+=texto.charAt(i++);
+    if(i>=texto.length) clearInterval(t);
+  },30);
+}
+
+function cerrar(){
+  document.getElementById("popup").style.display="none";
+  location.reload();
+}
+</script>
+
+</body>
+</html>
